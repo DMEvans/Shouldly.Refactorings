@@ -6,5 +6,6 @@
     public static class DiagnosticIds
     {
         public const string AssertIsNull = "MS0001";
+        public const string AssertAreEqual = "MS0003";
     }
 }

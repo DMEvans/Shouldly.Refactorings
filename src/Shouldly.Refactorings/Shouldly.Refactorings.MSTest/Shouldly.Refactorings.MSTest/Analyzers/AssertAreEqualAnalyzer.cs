@@ -1,17 +1,18 @@
-namespace Shouldly.Refactorings.MSTest.Analyzers
+﻿namespace Shouldly.Refactorings.MSTest.Analyzers
 {
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CSharp.Syntax;
     using Microsoft.CodeAnalysis.Diagnostics;
     using System.Collections.Immutable;
+    using System.Linq;
 
     [DiagnosticAnalyzer(LanguageNames.CSharp)]
-    public class AssertIsNullAnalyzer : BaseDiagnosticAnalyzer
+    public class AssertAreEqualAnalyzer : BaseDiagnosticAnalyzer
     {
         /// <summary>
         /// Returns a set of descriptors for the diagnostics that this analyzer is capable of producing.
         /// </summary>
-        public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics { get { return ImmutableArray.Create(AssertIsNullRule); } }
+        public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics { get { return ImmutableArray.Create(AssertAreEqualRule); } }
 
         /// <summary>
         /// Gets the assert is null rule.
@@ -19,11 +20,8 @@ namespace Shouldly.Refactorings.MSTest.Analyzers
         /// <value>
         /// The assert is null rule.
         /// </value>
-        internal static DiagnosticDescriptor AssertIsNullRule => BuildAssertIsNullRule();
+        internal static DiagnosticDescriptor AssertAreEqualRule => BuildAssertAreEqualRule();
 
-        /// <summary>
-        /// Analyzes the invocation.
-        /// </summary>
         protected override void AnalyzeInvocation()
         {
             var invocationExpression = Context.Node as InvocationExpressionSyntax;
@@ -42,7 +40,7 @@ namespace Shouldly.Refactorings.MSTest.Analyzers
                 return;
             }
 
-            if (memberAccessExpression.Name.Identifier.Text != "IsNull")
+            if (memberAccessExpression.Name.Identifier.Text != "AreEqual")
             {
                 return;
             }
@@ -54,23 +52,25 @@ namespace Shouldly.Refactorings.MSTest.Analyzers
                 return;
             }
 
-            var firstArgument = argumentList.Arguments.First();
+            var argumentsArray = argumentList.Arguments.ToArray();
+            var expectedArgument = argumentsArray[0];
+            var actualArgument = argumentsArray[1];
 
-            RaiseDiagnostic(AssertIsNullRule, invocationExpression.GetLocation(), firstArgument.ToString());
+            RaiseDiagnostic(
+                AssertAreEqualRule, 
+                invocationExpression.GetLocation(), 
+                expectedArgument.ToString(), 
+                actualArgument.ToString());
         }
 
-        /// <summary>
-        /// Builds the assert is null rule.
-        /// </summary>
-        /// <returns></returns>
-        private static DiagnosticDescriptor BuildAssertIsNullRule()
+        private static DiagnosticDescriptor BuildAssertAreEqualRule()
         {
             return BuildRule(
-               DiagnosticIds.AssertIsNull,
-               nameof(Resources.AssertIsNullTitle),
-               nameof(Resources.AssertIsNullMessageFormat),
-               nameof(Resources.AssertIsNullCategory),
-               nameof(Resources.AssertIsNullDescription),
+               DiagnosticIds.AssertAreEqual,
+               nameof(Resources.AssertAreEqualTitle),
+               nameof(Resources.AssertAreEqualMessageFormat),
+               nameof(Resources.AssertAreEqualCategory),
+               nameof(Resources.AssertAreEqualDescription),
                DiagnosticSeverity.Info);
         }
     }

@@ -64,45 +64,90 @@ namespace Shouldly.Refactorings.MSTest {
         /// <summary>
         ///   Looks up a localized string similar to Shouldly.
         /// </summary>
-        internal static string MsTestAssertIsNullCategory {
+        internal static string AssertAreEqualCategory {
             get {
-                return ResourceManager.GetString("MsTestAssertIsNullCategory", resourceCulture);
+                return ResourceManager.GetString("AssertAreEqualCategory", resourceCulture);
             }
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Assert.IsNull(value) should be replaced with value.ShouldBeNull().
+        ///   Looks up a localized string similar to Assert.AreEqual(expected, actual) should be replaced with actual.ShouldBeNull(expected).
         /// </summary>
-        internal static string MsTestAssertIsNullDescription {
+        internal static string AssertAreEqualDescription {
             get {
-                return ResourceManager.GetString("MsTestAssertIsNullDescription", resourceCulture);
+                return ResourceManager.GetString("AssertAreEqualDescription", resourceCulture);
             }
         }
         
         /// <summary>
         ///   Looks up a localized string similar to Convert to a Shouldly assertion.
         /// </summary>
-        internal static string MsTestAssertIsNullFixText {
+        internal static string AssertAreEqualFixText {
             get {
-                return ResourceManager.GetString("MsTestAssertIsNullFixText", resourceCulture);
+                return ResourceManager.GetString("AssertAreEqualFixText", resourceCulture);
             }
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Assert.IsNull({0}) should be replaced with {0}.ShouldBeNull().
+        ///   Looks up a localized string similar to Assert.AreEqual({0}, {1}) should be replaced with {0}.ShouldBeNull({1}).
         /// </summary>
-        internal static string MsTestAssertIsNullMessageFormat {
+        internal static string AssertAreEqualMessageFormat {
             get {
-                return ResourceManager.GetString("MsTestAssertIsNullMessageFormat", resourceCulture);
+                return ResourceManager.GetString("AssertAreEqualMessageFormat", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Assert.AreEqual(expected, actual) should be replaced with actual.ShouldBeNull(expected).
+        /// </summary>
+        internal static string AssertAreEqualTitle {
+            get {
+                return ResourceManager.GetString("AssertAreEqualTitle", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Shouldly.
+        /// </summary>
+        internal static string AssertIsNullCategory {
+            get {
+                return ResourceManager.GetString("AssertIsNullCategory", resourceCulture);
             }
         }
         
         /// <summary>
         ///   Looks up a localized string similar to Assert.IsNull(value) should be replaced with value.ShouldBeNull().
         /// </summary>
-        internal static string MsTestAssertIsNullTitle {
+        internal static string AssertIsNullDescription {
             get {
-                return ResourceManager.GetString("MsTestAssertIsNullTitle", resourceCulture);
+                return ResourceManager.GetString("AssertIsNullDescription", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Convert to a Shouldly assertion.
+        /// </summary>
+        internal static string AssertIsNullFixText {
+            get {
+                return ResourceManager.GetString("AssertIsNullFixText", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Assert.IsNull({0}) should be replaced with {0}.ShouldBeNull().
+        /// </summary>
+        internal static string AssertIsNullMessageFormat {
+            get {
+                return ResourceManager.GetString("AssertIsNullMessageFormat", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Assert.IsNull(value) should be replaced with value.ShouldBeNull().
+        /// </summary>
+        internal static string AssertIsNullTitle {
+            get {
+                return ResourceManager.GetString("AssertIsNullTitle", resourceCulture);
             }
         }
     }
