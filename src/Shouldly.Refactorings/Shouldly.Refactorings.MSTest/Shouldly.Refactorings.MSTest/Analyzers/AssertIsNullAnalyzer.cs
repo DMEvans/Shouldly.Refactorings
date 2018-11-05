@@ -67,10 +67,10 @@ namespace Shouldly.Refactorings.MSTest.Analyzers
         {
             return BuildRule(
                DiagnosticIds.AssertIsNull,
-               nameof(Resources.MsTestAssertIsNullTitle),
-               nameof(Resources.MsTestAssertIsNullMessageFormat),
-               nameof(Resources.MsTestAssertIsNullCategory),
-               nameof(Resources.MsTestAssertIsNullDescription),
+               nameof(Resources.AssertIsNullTitle),
+               nameof(Resources.AssertIsNullMessageFormat),
+               nameof(Resources.AssertIsNullCategory),
+               nameof(Resources.AssertIsNullDescription),
                DiagnosticSeverity.Info);
         }
     }

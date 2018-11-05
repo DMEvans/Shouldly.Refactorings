@@ -26,7 +26,7 @@ namespace Shouldly.Refactorings.MSTest.CodeFixes
         /// <value>
         /// The title.
         /// </value>
-        private string Title => GetLocalizedResourceString(nameof(Resources.MsTestAssertIsNullFixText)).ToString();
+        private string Title => GetLocalizedResourceString(nameof(Resources.AssertIsNullFixText)).ToString();
 
         /// <summary>
         /// Gets an optional <see cref="T:Microsoft.CodeAnalysis.CodeFixes.FixAllProvider" /> that can fix all/multiple occurrences of diagnostics fixed by this code fix provider.
