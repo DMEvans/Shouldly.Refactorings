@@ -12,8 +12,8 @@ namespace Shouldly.Refactorings.MSTest.CodeFixes
     using System.Threading;
     using System.Threading.Tasks;
 
-    [ExportCodeFixProvider(LanguageNames.CSharp, Name = nameof(AssertIsNullCodeFix)), Shared]
-    public class AssertIsNullCodeFix : BaseCodeFixProvider
+    [ExportCodeFixProvider(LanguageNames.CSharp, Name = nameof(AssertIsNullCodeFixProvider)), Shared]
+    public class AssertIsNullCodeFixProvider : BaseCodeFixProvider
     {
         /// <summary>
         /// A list of diagnostic IDs that this provider can provider fixes for.
