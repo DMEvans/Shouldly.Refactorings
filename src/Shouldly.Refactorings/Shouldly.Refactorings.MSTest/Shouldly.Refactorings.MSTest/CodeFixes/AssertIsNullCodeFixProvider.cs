@@ -29,40 +29,6 @@ namespace Shouldly.Refactorings.MSTest.CodeFixes
         private string Title => GetLocalizedResourceString(nameof(Resources.AssertIsNullFixText)).ToString();
 
         /// <summary>
-        /// Gets an optional <see cref="T:Microsoft.CodeAnalysis.CodeFixes.FixAllProvider" /> that can fix all/multiple occurrences of diagnostics fixed by this code fix provider.
-        /// Return null if the provider doesn't support fix all/multiple occurrences.
-        /// Otherwise, you can return any of the well known fix all providers from <see cref="T:Microsoft.CodeAnalysis.CodeFixes.WellKnownFixAllProviders" /> or implement your own fix all provider.
-        /// </summary>
-        /// <returns></returns>
-        public sealed override FixAllProvider GetFixAllProvider()
-        {
-            return WellKnownFixAllProviders.BatchFixer;
-        }
-
-        /// <summary>
-        /// Computes one or more fixes for the specified <see cref="T:Microsoft.CodeAnalysis.CodeFixes.CodeFixContext" />.
-        /// </summary>
-        /// <param name="context">A <see cref="T:Microsoft.CodeAnalysis.CodeFixes.CodeFixContext" /> containing context information about the diagnostics to fix.
-        /// The context must only contain diagnostics with a <see cref="P:Microsoft.CodeAnalysis.Diagnostic.Id" /> included in the <see cref="P:Microsoft.CodeAnalysis.CodeFixes.CodeFixProvider.FixableDiagnosticIds" /> for the current provider.</param>
-        /// <returns></returns>
-        public sealed override async Task RegisterCodeFixesAsync(CodeFixContext context)
-        {
-            var root = await context.Document.GetSyntaxRootAsync(context.CancellationToken).ConfigureAwait(false);
-
-            var diagnostic = context.Diagnostics.First();
-            var diagnosticSpan = diagnostic.Location.SourceSpan;
-
-            var expression = root.FindNode(diagnosticSpan);
-
-            context.RegisterCodeFix(
-                CodeAction.Create(
-                    title: Title,
-                    createChangedDocument: cancellationToken => ConvertToShouldlyAssertion(context.Document, expression, cancellationToken),
-                    equivalenceKey: Title),
-                diagnostic);
-        }
-
-        /// <summary>
         /// Builds the new invocation expression.
         /// </summary>
         /// <param name="invocationExpression">The invocation expression.</param>
