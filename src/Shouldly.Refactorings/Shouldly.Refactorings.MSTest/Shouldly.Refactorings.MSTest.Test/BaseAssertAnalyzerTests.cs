@@ -304,7 +304,7 @@
 
         protected override CodeFixProvider GetCSharpCodeFixProvider()
         {
-            return new AssertIsNullCodeFix();
+            return new AssertIsNullCodeFixProvider();
         }
 
         protected override DiagnosticAnalyzer GetCSharpDiagnosticAnalyzer()
