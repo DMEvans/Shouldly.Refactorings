@@ -117,23 +117,43 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <data name="MsTestAssertIsNullCategory" xml:space="preserve">
+  <data name="AssertAreEqualCategory" xml:space="preserve">
     <value>Shouldly</value>
     <comment>The category of the diagnostic</comment>
   </data>
-  <data name="MsTestAssertIsNullDescription" xml:space="preserve">
-    <value>Assert.IsNull(value) should be replaced with value.ShouldBeNull()</value>
+  <data name="AssertAreEqualDescription" xml:space="preserve">
+    <value>Assert.AreEqual(expected, actual) should be replaced with actual.ShouldBeNull(expected)</value>
     <comment>An optional longer localizable description of the diagnostic.</comment>
   </data>
-  <data name="MsTestAssertIsNullFixText" xml:space="preserve">
+  <data name="AssertAreEqualFixText" xml:space="preserve">
     <value>Convert to a Shouldly assertion</value>
     <comment>The on-screen description of the code fix</comment>
   </data>
-  <data name="MsTestAssertIsNullMessageFormat" xml:space="preserve">
+  <data name="AssertAreEqualMessageFormat" xml:space="preserve">
+    <value>Assert.AreEqual({0}, {1}) should be replaced with {0}.ShouldBeNull({1})</value>
+    <comment>The format-able message the diagnostic displays.</comment>
+  </data>
+  <data name="AssertAreEqualTitle" xml:space="preserve">
+    <value>Assert.AreEqual(expected, actual) should be replaced with actual.ShouldBeNull(expected)</value>
+    <comment>The title of the diagnostic.</comment>
+  </data>
+  <data name="AssertIsNullCategory" xml:space="preserve">
+    <value>Shouldly</value>
+    <comment>The category of the diagnostic</comment>
+  </data>
+  <data name="AssertIsNullDescription" xml:space="preserve">
+    <value>Assert.IsNull(value) should be replaced with value.ShouldBeNull()</value>
+    <comment>An optional longer localizable description of the diagnostic.</comment>
+  </data>
+  <data name="AssertIsNullFixText" xml:space="preserve">
+    <value>Convert to a Shouldly assertion</value>
+    <comment>The on-screen description of the code fix</comment>
+  </data>
+  <data name="AssertIsNullMessageFormat" xml:space="preserve">
     <value>Assert.IsNull({0}) should be replaced with {0}.ShouldBeNull()</value>
     <comment>The format-able message the diagnostic displays.</comment>
   </data>
-  <data name="MsTestAssertIsNullTitle" xml:space="preserve">
+  <data name="AssertIsNullTitle" xml:space="preserve">
     <value>Assert.IsNull(value) should be replaced with value.ShouldBeNull()</value>
     <comment>The title of the diagnostic.</comment>
   </data>
