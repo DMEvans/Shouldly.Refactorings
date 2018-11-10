@@ -5,6 +5,7 @@
     using Microsoft.CodeAnalysis.Diagnostics;
     using Microsoft.VisualStudio.TestTools.UnitTesting;
     using Shouldly.Refactorings.MSTest.Analyzers;
+    using Shouldly.Refactorings.MSTest.CodeFixes;
     using System.Text;
     using TestHelper;
 
@@ -40,7 +41,7 @@
         }
 
         [TestMethod]
-        public void WithAssertAreEqual_DiagnosticsRaised()
+        public void WithAssertAreEqual_Basic_DiagnosticsRaised()
         {
             var testCodeBuilder = new StringBuilder();
 
@@ -48,6 +49,7 @@
                 .AppendLine("namespace ConsoleApplication1")
                 .AppendLine("{")
                 .AppendLine("    using Microsoft.VisualStudio.TestTools.UnitTesting;")
+                .AppendLine("    using Shouldly;")
                 .AppendLine("")
                 .AppendLine("    [TestClass]")
                 .AppendLine("    public class TypeName")
@@ -64,20 +66,103 @@
 
             var startCode = testCodeBuilder.ToString();
 
+            testCodeBuilder.Clear();
+            testCodeBuilder
+                .AppendLine("namespace ConsoleApplication1")
+                .AppendLine("{")
+                .AppendLine("    using Microsoft.VisualStudio.TestTools.UnitTesting;")
+                .AppendLine("    using Shouldly;")
+                .AppendLine("")
+                .AppendLine("    [TestClass]")
+                .AppendLine("    public class TypeName")
+                .AppendLine("    {")
+                .AppendLine("        [TestMethod]")
+                .AppendLine("        public void DoSomething()")
+                .AppendLine("        {")
+                .AppendLine("            string testValue1 = \"TEST 1\";")
+                .AppendLine("            string testValue2 = \"TEST 2\";")
+                .AppendLine("            testValue2.ShouldBe(testValue1);")
+                .AppendLine("        }")
+                .AppendLine("    }")
+                .AppendLine("}");
+
+            var fixedCode = testCodeBuilder.ToString();
+
             var expectedDiagnostic = new DiagnosticResult
             {
                 Id = DiagnosticIds.AssertAreEqual,
-                Message = "Assert.AreEqual(testValue1, testValue2) should be replaced with testValue1.ShouldBeNull(testValue2)",
+                Message = "Assert.AreEqual(testValue1, testValue2) should be replaced with testValue1.ShouldBe(testValue2)",
                 Severity = DiagnosticSeverity.Info,
-                Locations = new[] { new DiagnosticResultLocation("Test0.cs", 13, 13) }
+                Locations = new[] { new DiagnosticResultLocation("Test0.cs", 14, 13) }
             };
 
             VerifyCSharpDiagnostic(startCode, expectedDiagnostic);
+            VerifyCSharpFix(startCode, fixedCode, allowNewCompilerDiagnostics: true);
+        }
+
+        [TestMethod]
+        public void WithAssertAreEqual_WithMessage_DiagnosticsRaised()
+        {
+            var testCodeBuilder = new StringBuilder();
+
+            testCodeBuilder
+                .AppendLine("namespace ConsoleApplication1")
+                .AppendLine("{")
+                .AppendLine("    using Microsoft.VisualStudio.TestTools.UnitTesting;")
+                .AppendLine("    using Shouldly;")
+                .AppendLine("")
+                .AppendLine("    [TestClass]")
+                .AppendLine("    public class TypeName")
+                .AppendLine("    {")
+                .AppendLine("        [TestMethod]")
+                .AppendLine("        public void DoSomething()")
+                .AppendLine("        {")
+                .AppendLine("            string testValue1 = \"TEST 1\";")
+                .AppendLine("            string testValue2 = \"TEST 2\";")
+                .AppendLine("            Assert.AreEqual(testValue1, testValue2, \"The values do not match\");")
+                .AppendLine("        }")
+                .AppendLine("    }")
+                .AppendLine("}");
+
+            var startCode = testCodeBuilder.ToString();
+
+            testCodeBuilder.Clear();
+            testCodeBuilder
+                .AppendLine("namespace ConsoleApplication1")
+                .AppendLine("{")
+                .AppendLine("    using Microsoft.VisualStudio.TestTools.UnitTesting;")
+                .AppendLine("    using Shouldly;")
+                .AppendLine("")
+                .AppendLine("    [TestClass]")
+                .AppendLine("    public class TypeName")
+                .AppendLine("    {")
+                .AppendLine("        [TestMethod]")
+                .AppendLine("        public void DoSomething()")
+                .AppendLine("        {")
+                .AppendLine("            string testValue1 = \"TEST 1\";")
+                .AppendLine("            string testValue2 = \"TEST 2\";")
+                .AppendLine("            testValue2.ShouldBe(testValue1, \"The values do not match\");")
+                .AppendLine("        }")
+                .AppendLine("    }")
+                .AppendLine("}");
+
+            var fixedCode = testCodeBuilder.ToString();
+
+            var expectedDiagnostic = new DiagnosticResult
+            {
+                Id = DiagnosticIds.AssertAreEqual,
+                Message = "Assert.AreEqual(testValue1, testValue2) should be replaced with testValue1.ShouldBe(testValue2)",
+                Severity = DiagnosticSeverity.Info,
+                Locations = new[] { new DiagnosticResultLocation("Test0.cs", 14, 13) }
+            };
+
+            VerifyCSharpDiagnostic(startCode, expectedDiagnostic);
+            VerifyCSharpFix(startCode, fixedCode, allowNewCompilerDiagnostics: true);
         }
 
         protected override CodeFixProvider GetCSharpCodeFixProvider()
         {
-            return base.GetCSharpCodeFixProvider();
+            return new AssertAreEqualCodeFixProvider();
         }
 
         protected override DiagnosticAnalyzer GetCSharpDiagnosticAnalyzer()

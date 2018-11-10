@@ -1,10 +1,13 @@
 ﻿namespace Shouldly.Refactorings.MSTest
 {
     using Microsoft.CodeAnalysis;
+    using Microsoft.CodeAnalysis.CodeActions;
     using Microsoft.CodeAnalysis.CodeFixes;
     using Microsoft.CodeAnalysis.CSharp;
     using Microsoft.CodeAnalysis.CSharp.Syntax;
     using System.Linq;
+    using System.Threading;
+    using System.Threading.Tasks;
 
     public abstract class BaseCodeFixProvider : CodeFixProvider
     {
@@ -12,6 +15,14 @@
         /// The shouldly namespace
         /// </summary>
         private const string SHOULDLY_NAMESPACE = "Shouldly";
+
+        /// <summary>
+        /// Gets the title.
+        /// </summary>
+        /// <value>
+        /// The title.
+        /// </value>
+        protected abstract string Title { get; }
 
         /// <summary>
         /// Gets an optional <see cref="T:Microsoft.CodeAnalysis.CodeFixes.FixAllProvider" /> that can fix all/multiple occurrences of diagnostics fixed by this code fix provider.
@@ -46,6 +57,15 @@
                     equivalenceKey: Title),
                 diagnostic);
         }
+
+        /// <summary>
+        /// Converts to shouldly assertion.
+        /// </summary>
+        /// <param name="document">The document.</param>
+        /// <param name="expression">The expression.</param>
+        /// <param name="cancellationToken">The cancellation token.</param>
+        /// <returns>The updated document</returns>
+        protected abstract Task<Document> ConvertToShouldlyAssertion(Document document, SyntaxNode expression, CancellationToken cancellationToken);
 
         /// <summary>
         /// Gets the localized resource string.

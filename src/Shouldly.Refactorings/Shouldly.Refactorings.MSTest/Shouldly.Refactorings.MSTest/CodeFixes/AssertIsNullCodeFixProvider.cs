@@ -1,7 +1,6 @@
 namespace Shouldly.Refactorings.MSTest.CodeFixes
 {
     using Microsoft.CodeAnalysis;
-    using Microsoft.CodeAnalysis.CodeActions;
     using Microsoft.CodeAnalysis.CodeFixes;
     using Microsoft.CodeAnalysis.CSharp;
     using Microsoft.CodeAnalysis.CSharp.Syntax;
@@ -26,7 +25,27 @@ namespace Shouldly.Refactorings.MSTest.CodeFixes
         /// <value>
         /// The title.
         /// </value>
-        private string Title => GetLocalizedResourceString(nameof(Resources.AssertIsNullFixText)).ToString();
+        protected override string Title => GetLocalizedResourceString(nameof(Resources.AssertIsNullFixText)).ToString();
+
+        /// <summary>
+        /// Converts to Shouldly assertion.
+        /// </summary>
+        /// <param name="document">The document.</param>
+        /// <param name="expression">The expression.</param>
+        /// <param name="cancellationToken">The cancellation token.</param>
+        /// <returns>The updated document</returns>
+        protected override async Task<Document> ConvertToShouldlyAssertion(Document document, SyntaxNode expression, CancellationToken cancellationToken)
+        {
+            var invocationExpression = expression as InvocationExpressionSyntax;
+            var newInvocationExpression = BuildNewInvocationExpression(invocationExpression);
+
+            var oldRoot = await document.GetSyntaxRootAsync(cancellationToken).ConfigureAwait(false);
+            var newRoot = oldRoot as CompilationUnitSyntax;
+            newRoot = newRoot.ReplaceNode(invocationExpression, newInvocationExpression);
+            newRoot = UpdateShouldyUsingDirective(newRoot);
+
+            return document.WithSyntaxRoot(newRoot);
+        }
 
         /// <summary>
         /// Builds the new invocation expression.
@@ -92,26 +111,6 @@ namespace Shouldly.Refactorings.MSTest.CodeFixes
             var stringFormatInvocationExpression = SyntaxFactory.InvocationExpression(stringFormatExpression, argumentList);
 
             return stringFormatInvocationExpression;
-        }
-
-        /// <summary>
-        /// Converts to Shouldly assertion.
-        /// </summary>
-        /// <param name="document">The document.</param>
-        /// <param name="expression">The expression.</param>
-        /// <param name="cancellationToken">The cancellation token.</param>
-        /// <returns>The updated document</returns>
-        private async Task<Document> ConvertToShouldlyAssertion(Document document, SyntaxNode expression, CancellationToken cancellationToken)
-        {
-            var invocationExpression = expression as InvocationExpressionSyntax;
-            var newInvocationExpression = BuildNewInvocationExpression(invocationExpression);
-
-            var oldRoot = await document.GetSyntaxRootAsync(cancellationToken).ConfigureAwait(false);
-            var newRoot = oldRoot as CompilationUnitSyntax;
-            newRoot = newRoot.ReplaceNode(invocationExpression, newInvocationExpression);
-            newRoot = UpdateShouldyUsingDirective(newRoot);
-
-            return document.WithSyntaxRoot(newRoot);
         }
     }
 }
