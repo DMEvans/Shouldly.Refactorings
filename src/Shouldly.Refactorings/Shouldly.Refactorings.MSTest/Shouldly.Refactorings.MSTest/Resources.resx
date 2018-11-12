@@ -122,7 +122,7 @@
     <comment>The category of the diagnostic</comment>
   </data>
   <data name="AssertAreEqualDescription" xml:space="preserve">
-    <value>Assert.AreEqual(expected, actual) should be replaced with actual.ShouldBeNull(expected)</value>
+    <value>Assert.AreEqual(expected, actual) should be replaced with actual.ShouldBe(expected)</value>
     <comment>An optional longer localizable description of the diagnostic.</comment>
   </data>
   <data name="AssertAreEqualFixText" xml:space="preserve">
@@ -130,11 +130,11 @@
     <comment>The on-screen description of the code fix</comment>
   </data>
   <data name="AssertAreEqualMessageFormat" xml:space="preserve">
-    <value>Assert.AreEqual({0}, {1}) should be replaced with {0}.ShouldBeNull({1})</value>
+    <value>Assert.AreEqual({0}, {1}) should be replaced with {0}.ShouldBe({1})</value>
     <comment>The format-able message the diagnostic displays.</comment>
   </data>
   <data name="AssertAreEqualTitle" xml:space="preserve">
-    <value>Assert.AreEqual(expected, actual) should be replaced with actual.ShouldBeNull(expected)</value>
+    <value>Assert.AreEqual(expected, actual) should be replaced with actual.ShouldBe(expected)</value>
     <comment>The title of the diagnostic.</comment>
   </data>
   <data name="AssertIsNullCategory" xml:space="preserve">

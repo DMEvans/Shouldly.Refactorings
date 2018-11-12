@@ -10,7 +10,6 @@
 
 namespace Shouldly.Refactorings.MSTest {
     using System;
-    using System.Reflection;
     
     
     /// <summary>
@@ -40,7 +39,7 @@ namespace Shouldly.Refactorings.MSTest {
         internal static global::System.Resources.ResourceManager ResourceManager {
             get {
                 if (object.ReferenceEquals(resourceMan, null)) {
-                    global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("Shouldly.Refactorings.MSTest.Resources", typeof(Resources).GetTypeInfo().Assembly);
+                    global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("Shouldly.Refactorings.MSTest.Resources", typeof(Resources).Assembly);
                     resourceMan = temp;
                 }
                 return resourceMan;
@@ -71,7 +70,7 @@ namespace Shouldly.Refactorings.MSTest {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Assert.AreEqual(expected, actual) should be replaced with actual.ShouldBeNull(expected).
+        ///   Looks up a localized string similar to Assert.AreEqual(expected, actual) should be replaced with actual.ShouldBe(expected).
         /// </summary>
         internal static string AssertAreEqualDescription {
             get {
@@ -89,7 +88,7 @@ namespace Shouldly.Refactorings.MSTest {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Assert.AreEqual({0}, {1}) should be replaced with {0}.ShouldBeNull({1}).
+        ///   Looks up a localized string similar to Assert.AreEqual({0}, {1}) should be replaced with {0}.ShouldBe({1}).
         /// </summary>
         internal static string AssertAreEqualMessageFormat {
             get {
@@ -98,7 +97,7 @@ namespace Shouldly.Refactorings.MSTest {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Assert.AreEqual(expected, actual) should be replaced with actual.ShouldBeNull(expected).
+        ///   Looks up a localized string similar to Assert.AreEqual(expected, actual) should be replaced with actual.ShouldBe(expected).
         /// </summary>
         internal static string AssertAreEqualTitle {
             get {
