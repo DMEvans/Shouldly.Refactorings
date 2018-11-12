@@ -5,6 +5,7 @@
     using Microsoft.CodeAnalysis.CodeFixes;
     using Microsoft.CodeAnalysis.CSharp;
     using Microsoft.CodeAnalysis.CSharp.Syntax;
+    using Microsoft.VisualStudio.TestTools.UnitTesting;
     using System.Linq;
     using System.Threading;
     using System.Threading.Tasks;
@@ -119,6 +120,33 @@
             {
                 return compilationUnit.AddUsings(usingShouldly);
             }
+        }
+
+        protected SemanticModel ObtainSemanticModel(SyntaxTree syntaxTree)
+        {
+            var typesForReferences = new[]
+            {
+                typeof(object),
+                typeof(Assert),
+                typeof(Should)
+            };
+
+            var references = typesForReferences.Select(x => MetadataReference.CreateFromFile(x.Assembly.Location)).ToList();
+
+            var compilationOptions = new CSharpCompilationOptions(
+                    OutputKind.DynamicallyLinkedLibrary,
+                    optimizationLevel: OptimizationLevel.Debug,
+                    allowUnsafe: true);
+
+            var compilation = CSharpCompilation.Create(
+                                    "Test",
+                                    syntaxTrees: new[] { syntaxTree },
+                                    references: references,
+                                    options: compilationOptions);
+
+            var semanticModel = compilation.GetSemanticModel(syntaxTree, true);
+
+            return semanticModel;
         }
     }
 }
