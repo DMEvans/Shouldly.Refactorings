@@ -88,13 +88,7 @@
             var arguments = invocationExpression.ArgumentList.Arguments;
             var expectedArgument = arguments[0];
 
-            var stringFormatArguments = new List<ArgumentSyntax>();
-            
-            for (var i = 2; i < arguments.Count(); i++)
-            {
-                stringFormatArguments.Add(arguments[i]);
-            }
-
+            var stringFormatArguments = arguments.Where(x => arguments.IndexOf(x) >= 2);
             var stringFormatInvocationExpression = BuildStringFormatExpression(stringFormatArguments);
             var stringFormatInvocationArgument = SyntaxFactory.Argument(stringFormatInvocationExpression);
             var separatedArguments = SyntaxFactory.SeparatedList(new[] { expectedArgument, stringFormatInvocationArgument });
