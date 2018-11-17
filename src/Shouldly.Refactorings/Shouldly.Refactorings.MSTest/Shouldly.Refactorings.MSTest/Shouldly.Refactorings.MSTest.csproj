@@ -1,7 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>netstandard2.0</TargetFramework>
+    <TargetFramework>netstandard1.5</TargetFramework>
     <IncludeBuildOutput>false</IncludeBuildOutput>
     <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
   </PropertyGroup>
@@ -21,6 +21,27 @@
     <PackageTags>Shouldly.Refactorings.MSTest, analyzers</PackageTags>
     <NoPackageAnalysis>true</NoPackageAnalysis>
   </PropertyGroup>
+
+  <ItemGroup>
+    <None Remove="binRef\Microsoft.VisualStudio.TestPlatform.TestFramework.dll" />
+    <None Remove="binRef\Microsoft.VisualStudio.TestPlatform.TestFramework.Extensions.dll" />
+    <None Remove="binRef\Shouldly.dll" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Include="binRef\Microsoft.VisualStudio.TestPlatform.TestFramework.dll">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Include="binRef\Microsoft.VisualStudio.TestPlatform.TestFramework.Extensions.dll">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="binRef\Shouldly.dll">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+  </ItemGroup>
 
   <ItemGroup>
     <PackageReference Include="Microsoft.CodeAnalysis.Analyzers" Version="2.6.1" PrivateAssets="all" />
