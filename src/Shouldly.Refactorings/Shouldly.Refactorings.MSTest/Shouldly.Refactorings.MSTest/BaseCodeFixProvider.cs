@@ -7,6 +7,7 @@
     using Microsoft.CodeAnalysis.CSharp.Syntax;
     using Microsoft.VisualStudio.TestTools.UnitTesting;
     using System;
+    using System.Collections.Generic;
     using System.IO;
     using System.Linq;
     using System.Reflection;
@@ -127,14 +128,7 @@
 
         protected SemanticModel ObtainSemanticModel(SyntaxTree syntaxTree)
         {
-            var typesForReferences = new[]
-            {
-                typeof(object),
-                typeof(Assert),
-                typeof(Should)
-            };
-
-            var references = typesForReferences.Select(x => MetadataReference.CreateFromFile(x.GetTypeInfo().Assembly.Location));
+            var references = GetMetadataReferences();
 
             var compilationOptions = new CSharpCompilationOptions(
                     OutputKind.DynamicallyLinkedLibrary,
@@ -150,6 +144,20 @@
             var semanticModel = compilation.GetSemanticModel(syntaxTree, true);
 
             return semanticModel;
+        }
+
+        private static IEnumerable<PortableExecutableReference> GetMetadataReferences()
+        {
+            var externalFiles = new[]
+            {
+                typeof(object).GetTypeInfo().Assembly.Location,
+                "binRef\\Shouldly.dll",
+                "binRef\\Microsoft.VisualStudio.TestPlatform.TestFramework.dll",
+                "binRef\\Microsoft.VisualStudio.TestPlatform.TestFramework.Extensions.dll"
+            };
+
+            var references = externalFiles.Select(x => MetadataReference.CreateFromFile(x));
+            return references;
         }
     }
 }
