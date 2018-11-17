@@ -6,12 +6,15 @@ namespace Shouldly.Refactorings.MSTest.CodeFixes
     using Microsoft.CodeAnalysis.CSharp;
     using Microsoft.CodeAnalysis.CSharp.Syntax;
     using Shouldly.Refactorings.MSTest.ExpressionBuilders;
-    using System;
     using System.Collections.Immutable;
     using System.Composition;
     using System.Linq;
     using System.Threading.Tasks;
 
+    /// <summary>
+    /// Code fix provider to convert MSTest Assert.IsNull invocations to Shouldly ShouldBeNull invocations
+    /// </summary>
+    /// <seealso cref="Shouldly.Refactorings.MSTest.CodeFixes.BaseShouldlyCodeFixProvider" />
     [ExportCodeFixProvider(LanguageNames.CSharp, Name = nameof(AssertIsNullCodeFixProvider)), Shared]
     public class AssertIsNullCodeFixProvider : BaseShouldlyCodeFixProvider
     {
@@ -73,6 +76,23 @@ namespace Shouldly.Refactorings.MSTest.CodeFixes
         }
 
         /// <summary>
+        /// Builds the member access expression.
+        /// </summary>
+        /// <param name="invocationExpression">The invocation expression.</param>
+        /// <returns>The new member access expressoin</returns>
+        private MemberAccessExpressionSyntax BuildMemberAccessExpression(InvocationExpressionSyntax invocationExpression)
+        {
+            var valueArgument = invocationExpression.ArgumentList.Arguments[0];
+
+            var identifier = valueArgument.Expression as IdentifierNameSyntax;
+            var shouldBeIdentifier = SyntaxFactory.IdentifierName("ShouldBeNull");
+
+            var newExpression = SyntaxFactory.MemberAccessExpression(SyntaxKind.SimpleMemberAccessExpression, identifier, shouldBeIdentifier);
+
+            return newExpression;
+        }
+
+        /// <summary>
         /// Builds the new invocation expression.
         /// </summary>
         /// <param name="invocationExpression">The invocation expression.</param>
@@ -120,6 +140,11 @@ namespace Shouldly.Refactorings.MSTest.CodeFixes
             return newInvocationExpression;
         }
 
+        /// <summary>
+        /// Builds the invocation expression for value.ShouldBeNull().
+        /// </summary>
+        /// <param name="invocationExpression">The invocation expression.</param>
+        /// <returns>The new invocation expression</returns>
         private InvocationExpressionSyntax BuildShouldBeNull(InvocationExpressionSyntax invocationExpression)
         {
             var newMemberAccessExpression = BuildMemberAccessExpression(invocationExpression);
@@ -133,17 +158,11 @@ namespace Shouldly.Refactorings.MSTest.CodeFixes
             return newInvocationExpression;
         }
 
-        private MemberAccessExpressionSyntax BuildMemberAccessExpression(InvocationExpressionSyntax invocationExpression)
-        {
-            var valueArgument = invocationExpression.ArgumentList.Arguments[0];
-
-            var identifier = valueArgument.Expression as IdentifierNameSyntax;
-            var shouldBeIdentifier = SyntaxFactory.IdentifierName("ShouldBeNull");
-
-            var newExpression = SyntaxFactory.MemberAccessExpression(SyntaxKind.SimpleMemberAccessExpression, identifier, shouldBeIdentifier);
-
-            return newExpression;
-        }
+        /// <summary>
+        /// Builds the invocation expression for value.ShouldBeNull(message).
+        /// </summary>
+        /// <param name="invocationExpression">The invocation expression.</param>
+        /// <returns>The new invocation expression</returns>
 
         private InvocationExpressionSyntax BuildShouldBeNullWithMessage(InvocationExpressionSyntax invocationExpression)
         {
@@ -161,6 +180,11 @@ namespace Shouldly.Refactorings.MSTest.CodeFixes
             return newInvocationExpression;
         }
 
+        /// <summary>
+        /// Builds the invocation expression for value.ShouldBeNull(string.Format(message, parameters)).
+        /// </summary>
+        /// <param name="invocationExpression">The invocation expression.</param>
+        /// <returns>The new invocation expression</returns>
         private InvocationExpressionSyntax BuildShouldBeNullWithMessageAndParameters(InvocationExpressionSyntax invocationExpression)
         {
             var newMemberAccessExpression = BuildMemberAccessExpression(invocationExpression);
@@ -180,6 +204,13 @@ namespace Shouldly.Refactorings.MSTest.CodeFixes
             return newInvocationExpression;
         }
 
+        /// <summary>
+        /// Determines whether the invocation is Assert.IsNull(value).
+        /// </summary>
+        /// <param name="symbol">The symbol.</param>
+        /// <returns>
+        ///   <c>true</c> if the invocation is Assert.IsNull(value).
+        /// </returns>
         private bool IsBasicOverload(IMethodSymbol symbol)
         {
             var parameters = symbol.Parameters;
@@ -192,6 +223,13 @@ namespace Shouldly.Refactorings.MSTest.CodeFixes
             return parameters[0].Name == "value";
         }
 
+        /// <summary>
+        /// Determines whether the invocation is Assert.IsNull(value, message).
+        /// </summary>
+        /// <param name="symbol">The symbol.</param>
+        /// <returns>
+        ///   <c>true</c> if the invocation is Assert.IsNull(value, message).
+        /// </returns>
         private bool IsMessageAndParametersOverload(IMethodSymbol symbol)
         {
             var parameters = symbol.Parameters;
@@ -206,6 +244,13 @@ namespace Shouldly.Refactorings.MSTest.CodeFixes
                    parameters[2].Name == "parameters" && parameters[2].IsParams;
         }
 
+        /// <summary>
+        /// Determines whether the invocation is Assert.IsNull(value, message, parameters).
+        /// </summary>
+        /// <param name="symbol">The symbol.</param>
+        /// <returns>
+        ///   <c>true</c> if the invocation is Assert.IsNull(value, message, parameters).
+        /// </returns>
         private bool IsMessageOverload(IMethodSymbol symbol)
         {
             var parameters = symbol.Parameters;

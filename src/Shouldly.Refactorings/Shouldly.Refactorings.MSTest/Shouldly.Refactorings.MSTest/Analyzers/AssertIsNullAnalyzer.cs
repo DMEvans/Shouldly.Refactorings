@@ -5,6 +5,10 @@ namespace Shouldly.Refactorings.MSTest.Analyzers
     using Microsoft.CodeAnalysis.Diagnostics;
     using System.Collections.Immutable;
 
+    /// <summary>
+    /// Analyzer to find and report invocations of MSTest Assert.IsNull
+    /// </summary>
+    /// <seealso cref="Shouldly.Refactorings.MSTest.BaseDiagnosticAnalyzer" />
     [DiagnosticAnalyzer(LanguageNames.CSharp)]
     public class AssertIsNullAnalyzer : BaseDiagnosticAnalyzer
     {
@@ -19,7 +23,7 @@ namespace Shouldly.Refactorings.MSTest.Analyzers
         /// <value>
         /// The assert is null rule.
         /// </value>
-        internal static DiagnosticDescriptor AssertIsNullRule => BuildAssertIsNullRule();
+        internal static DiagnosticDescriptor AssertIsNullRule => BuildRule();
 
         /// <summary>
         /// Analyzes the invocation.
@@ -60,10 +64,10 @@ namespace Shouldly.Refactorings.MSTest.Analyzers
         }
 
         /// <summary>
-        /// Builds the assert is null rule.
+        /// Builds the diagnostic descriptor rule.
         /// </summary>
-        /// <returns></returns>
-        private static DiagnosticDescriptor BuildAssertIsNullRule()
+        /// <returns>The diagnostic descriptor rule.</returns>
+        private static DiagnosticDescriptor BuildRule()
         {
             return BuildRule(
                DiagnosticIds.AssertIsNull,
