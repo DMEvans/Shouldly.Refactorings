@@ -5,16 +5,26 @@ namespace Shouldly.Refactorings.MSTest.CodeFixes
     using Microsoft.CodeAnalysis.CodeFixes;
     using Microsoft.CodeAnalysis.CSharp;
     using Microsoft.CodeAnalysis.CSharp.Syntax;
-    using System.Collections.Generic;
+    using Shouldly.Refactorings.MSTest.ExpressionBuilders;
+    using System;
     using System.Collections.Immutable;
     using System.Composition;
     using System.Linq;
-    using System.Threading;
     using System.Threading.Tasks;
 
     [ExportCodeFixProvider(LanguageNames.CSharp, Name = nameof(AssertIsNullCodeFixProvider)), Shared]
-    public class AssertIsNullCodeFixProvider : BaseCodeFixProvider
+    public class AssertIsNullCodeFixProvider : BaseShouldlyCodeFixProvider
     {
+        public AssertIsNullCodeFixProvider()
+        {
+            ExpressionBuilders = new[]
+            {
+                new InvocationExpressionBuilder(IsBasicOverload, BuildShouldBeNull),
+                new InvocationExpressionBuilder(IsMessageOverload, BuildShouldBeNullWithMessage),
+                new InvocationExpressionBuilder(IsMessageAndParametersOverload, BuildShouldBeNullWithMessageAndParameters)
+            };
+        }
+
         /// <summary>
         /// A list of diagnostic IDs that this provider can provider fixes for.
         /// </summary>
@@ -26,7 +36,7 @@ namespace Shouldly.Refactorings.MSTest.CodeFixes
         /// <value>
         /// The title.
         /// </value>
-        private string Title => GetLocalizedResourceString(nameof(Resources.AssertIsNullFixText)).ToString();
+        protected override string Title => GetLocalizedResourceString(nameof(Resources.AssertIsNullFixText)).ToString();
 
         /// <summary>
         /// Gets an optional <see cref="T:Microsoft.CodeAnalysis.CodeFixes.FixAllProvider" /> that can fix all/multiple occurrences of diagnostics fixed by this code fix provider.
@@ -110,42 +120,103 @@ namespace Shouldly.Refactorings.MSTest.CodeFixes
             return newInvocationExpression;
         }
 
-        /// <summary>
-        /// Builds the string format expression.
-        /// </summary>
-        /// <param name="otherArguments">The other arguments.</param>
-        /// <returns></returns>
-        private InvocationExpressionSyntax BuildStringFormatExpression(IEnumerable<ArgumentSyntax> otherArguments)
+        private InvocationExpressionSyntax BuildShouldBeNull(InvocationExpressionSyntax invocationExpression)
         {
-            var stringIdentifier = SyntaxFactory.IdentifierName("string");
-            var formatIdentifier = SyntaxFactory.IdentifierName("Format");
-            var separatedArguments = SyntaxFactory.SeparatedList(otherArguments);
-            var argumentList = SyntaxFactory.ArgumentList(separatedArguments);
+            var newMemberAccessExpression = BuildMemberAccessExpression(invocationExpression);
 
-            var stringFormatExpression = SyntaxFactory.MemberAccessExpression(SyntaxKind.SimpleMemberAccessExpression, stringIdentifier, formatIdentifier);
-            var stringFormatInvocationExpression = SyntaxFactory.InvocationExpression(stringFormatExpression, argumentList);
+            var separatedArguments = SyntaxFactory.SeparatedList(new SyntaxNode[] { });
+            var newArgumentList = SyntaxFactory.ArgumentList(separatedArguments);
+            var newInvocationExpression = SyntaxFactory
+                                       .InvocationExpression(newMemberAccessExpression)
+                                       .WithLeadingTrivia(invocationExpression.GetLeadingTrivia());
 
-            return stringFormatInvocationExpression;
+            return newInvocationExpression;
         }
 
-        /// <summary>
-        /// Converts to Shouldly assertion.
-        /// </summary>
-        /// <param name="document">The document.</param>
-        /// <param name="expression">The expression.</param>
-        /// <param name="cancellationToken">The cancellation token.</param>
-        /// <returns>The updated document</returns>
-        private async Task<Document> ConvertToShouldlyAssertion(Document document, SyntaxNode expression, CancellationToken cancellationToken)
+        private MemberAccessExpressionSyntax BuildMemberAccessExpression(InvocationExpressionSyntax invocationExpression)
         {
-            var invocationExpression = expression as InvocationExpressionSyntax;
-            var newInvocationExpression = BuildNewInvocationExpression(invocationExpression);
+            var valueArgument = invocationExpression.ArgumentList.Arguments[0];
 
-            var oldRoot = await document.GetSyntaxRootAsync(cancellationToken).ConfigureAwait(false);
-            var newRoot = oldRoot as CompilationUnitSyntax;
-            newRoot = newRoot.ReplaceNode(invocationExpression, newInvocationExpression);
-            newRoot = UpdateShouldyUsingDirective(newRoot);
+            var identifier = valueArgument.Expression as IdentifierNameSyntax;
+            var shouldBeIdentifier = SyntaxFactory.IdentifierName("ShouldBeNull");
 
-            return document.WithSyntaxRoot(newRoot);
+            var newExpression = SyntaxFactory.MemberAccessExpression(SyntaxKind.SimpleMemberAccessExpression, identifier, shouldBeIdentifier);
+
+            return newExpression;
+        }
+
+        private InvocationExpressionSyntax BuildShouldBeNullWithMessage(InvocationExpressionSyntax invocationExpression)
+        {
+            var newMemberAccessExpression = BuildMemberAccessExpression(invocationExpression);
+
+            var arguments = invocationExpression.ArgumentList.Arguments;
+            var messageArgument = arguments[1];
+            var separatedArguments = SyntaxFactory.SeparatedList(new[] { messageArgument });
+            var newArgumentList = SyntaxFactory.ArgumentList(separatedArguments);
+
+            var newInvocationExpression = SyntaxFactory
+                                       .InvocationExpression(newMemberAccessExpression, newArgumentList)
+                                       .WithLeadingTrivia(invocationExpression.GetLeadingTrivia());
+
+            return newInvocationExpression;
+        }
+
+        private InvocationExpressionSyntax BuildShouldBeNullWithMessageAndParameters(InvocationExpressionSyntax invocationExpression)
+        {
+            var newMemberAccessExpression = BuildMemberAccessExpression(invocationExpression);
+
+            var arguments = invocationExpression.ArgumentList.Arguments;
+            var valueArgument = arguments[0];
+            var stringFormatArguments = arguments.Where(x => x != valueArgument);
+            var stringFormatInvocationExpression = BuildStringFormatExpression(stringFormatArguments);
+            var stringFormatInvocationArgument = SyntaxFactory.Argument(stringFormatInvocationExpression);
+            var separatedArguments = SyntaxFactory.SeparatedList(new[] { stringFormatInvocationArgument });
+            var newArgumentList = SyntaxFactory.ArgumentList(separatedArguments);
+
+            var newInvocationExpression = SyntaxFactory
+                                       .InvocationExpression(newMemberAccessExpression, newArgumentList)
+                                       .WithLeadingTrivia(invocationExpression.GetLeadingTrivia());
+
+            return newInvocationExpression;
+        }
+
+        private bool IsBasicOverload(IMethodSymbol symbol)
+        {
+            var parameters = symbol.Parameters;
+
+            if (parameters.Count() != 1)
+            {
+                return false;
+            }
+
+            return parameters[0].Name == "value";
+        }
+
+        private bool IsMessageAndParametersOverload(IMethodSymbol symbol)
+        {
+            var parameters = symbol.Parameters;
+
+            if (parameters.Count() != 3)
+            {
+                return false;
+            }
+
+            return parameters[0].Name == "value" &&
+                   parameters[1].Name == "message" &&
+                   parameters[2].Name == "parameters" && parameters[2].IsParams;
+        }
+
+        private bool IsMessageOverload(IMethodSymbol symbol)
+        {
+            var parameters = symbol.Parameters;
+
+            if (parameters.Count() != 2)
+            {
+                return false;
+            }
+
+            return parameters[0].Name == "value" &&
+                   parameters[1].Name == "message";
         }
     }
 }
