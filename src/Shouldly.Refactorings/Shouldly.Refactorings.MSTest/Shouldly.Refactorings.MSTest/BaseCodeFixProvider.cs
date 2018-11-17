@@ -6,7 +6,10 @@
     using Microsoft.CodeAnalysis.CSharp;
     using Microsoft.CodeAnalysis.CSharp.Syntax;
     using Microsoft.VisualStudio.TestTools.UnitTesting;
+    using System;
+    using System.IO;
     using System.Linq;
+    using System.Reflection;
     using System.Threading;
     using System.Threading.Tasks;
 
@@ -131,7 +134,7 @@
                 typeof(Should)
             };
 
-            var references = typesForReferences.Select(x => MetadataReference.CreateFromFile(x.Assembly.Location)).ToList();
+            var references = typesForReferences.Select(x => MetadataReference.CreateFromFile(x.GetTypeInfo().Assembly.Location));
 
             var compilationOptions = new CSharpCompilationOptions(
                     OutputKind.DynamicallyLinkedLibrary,
