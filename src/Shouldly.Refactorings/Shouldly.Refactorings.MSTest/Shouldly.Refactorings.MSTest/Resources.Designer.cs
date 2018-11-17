@@ -11,8 +11,8 @@
 namespace Shouldly.Refactorings.MSTest {
     using System;
     using System.Reflection;
-    
-    
+
+
     /// <summary>
     ///   A strongly-typed resource class, for looking up localized strings, etc.
     /// </summary>
@@ -71,7 +71,7 @@ namespace Shouldly.Refactorings.MSTest {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Assert.AreEqual(expected, actual) should be replaced with actual.ShouldBeNull(expected).
+        ///   Looks up a localized string similar to Assert.AreEqual(expected, actual) should be replaced with actual.ShouldBe(expected).
         /// </summary>
         internal static string AssertAreEqualDescription {
             get {
@@ -89,7 +89,7 @@ namespace Shouldly.Refactorings.MSTest {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Assert.AreEqual({0}, {1}) should be replaced with {0}.ShouldBeNull({1}).
+        ///   Looks up a localized string similar to Assert.AreEqual({0}, {1}) should be replaced with {0}.ShouldBe({1}).
         /// </summary>
         internal static string AssertAreEqualMessageFormat {
             get {
@@ -98,7 +98,7 @@ namespace Shouldly.Refactorings.MSTest {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Assert.AreEqual(expected, actual) should be replaced with actual.ShouldBeNull(expected).
+        ///   Looks up a localized string similar to Assert.AreEqual(expected, actual) should be replaced with actual.ShouldBe(expected).
         /// </summary>
         internal static string AssertAreEqualTitle {
             get {

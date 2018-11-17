@@ -53,6 +53,12 @@
             }
 
             var argumentsArray = argumentList.Arguments.ToArray();
+
+            if (argumentsArray.Length < 2)
+            {
+                return;
+            }
+
             var expectedArgument = argumentsArray[0];
             var actualArgument = argumentsArray[1];
 
