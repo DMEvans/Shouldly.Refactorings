@@ -148,15 +148,19 @@
 
         private static IEnumerable<PortableExecutableReference> GetMetadataReferences()
         {
-            var externalFiles = new[]
-            {
-                typeof(object).GetTypeInfo().Assembly.Location,
-                "binRef\\Shouldly.dll",
-                "binRef\\Microsoft.VisualStudio.TestPlatform.TestFramework.dll",
-                "binRef\\Microsoft.VisualStudio.TestPlatform.TestFramework.Extensions.dll"
-            };
+            var references = new List<PortableExecutableReference>();
+            references.Add(MetadataReference.CreateFromFile(typeof(object).GetTypeInfo().Assembly.Location));
 
-            var references = externalFiles.Select(x => MetadataReference.CreateFromFile(x));
+            var assembly = typeof(BaseCodeFixProvider).GetTypeInfo().Assembly;
+            var resourceNames = assembly.GetManifestResourceNames()
+                                    .Where(x => !x.EndsWith(".resources"));
+
+            foreach (string resourceName in resourceNames)
+            {
+                var resourceStream = assembly.GetManifestResourceStream(resourceName);
+                references.Add(MetadataReference.CreateFromStream(resourceStream));
+            }
+
             return references;
         }
     }
