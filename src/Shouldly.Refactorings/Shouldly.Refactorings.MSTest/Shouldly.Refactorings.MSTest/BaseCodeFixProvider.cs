@@ -128,16 +128,7 @@
 
         protected SemanticModel ObtainSemanticModel(SyntaxTree syntaxTree)
         {
-            //var typesForReferences = new[]
-            //{
-            //    typeof(object),
-            //    typeof(Assert),
-            //    typeof(Should)
-            //};
-
             var references = GetMetadataReferences();
-
-            //var references = typesForReferences.Select(x => MetadataReference.CreateFromFile(x.GetTypeInfo().Assembly.Location));
 
             var compilationOptions = new CSharpCompilationOptions(
                     OutputKind.DynamicallyLinkedLibrary,
@@ -160,9 +151,9 @@
             var externalFiles = new[]
             {
                 typeof(object).GetTypeInfo().Assembly.Location,
-                "binref\\Shouldly.dll",
-                "binref\\Microsoft.VisualStudio.TestPlatform.TestFramework.dll",
-                "binref\\Microsoft.VisualStudio.TestPlatform.TestFramework.Extensions.dll"
+                "binRef\\Shouldly.dll",
+                "binRef\\Microsoft.VisualStudio.TestPlatform.TestFramework.dll",
+                "binRef\\Microsoft.VisualStudio.TestPlatform.TestFramework.Extensions.dll"
             };
 
             var references = externalFiles.Select(x => MetadataReference.CreateFromFile(x));
