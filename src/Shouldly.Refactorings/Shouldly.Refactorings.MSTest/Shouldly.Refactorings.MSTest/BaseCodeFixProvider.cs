@@ -157,9 +157,6 @@
 
         private static IEnumerable<PortableExecutableReference> GetMetadataReferences()
         {
-            //var trustedFiles = AppContext.GetData("TRUSTED_PLATFORM_ASSEMBLIES").ToString().Split(';');
-            //var mscorlibPath = trustedFiles.Where(x => x.Contains("mscorlib.dll")).First();
-
             var externalFiles = new[]
             {
                 typeof(object).GetTypeInfo().Assembly.Location,
