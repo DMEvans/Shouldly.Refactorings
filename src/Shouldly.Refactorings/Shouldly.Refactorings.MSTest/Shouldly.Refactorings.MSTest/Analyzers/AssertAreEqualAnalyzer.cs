@@ -6,6 +6,10 @@
     using System.Collections.Immutable;
     using System.Linq;
 
+    /// <summary>
+    /// Analyzer to find and report invocations of MSTest Assert.AreEqual
+    /// </summary>
+    /// <seealso cref="Shouldly.Refactorings.MSTest.BaseDiagnosticAnalyzer" />
     [DiagnosticAnalyzer(LanguageNames.CSharp)]
     public class AssertAreEqualAnalyzer : BaseDiagnosticAnalyzer
     {
@@ -20,8 +24,11 @@
         /// <value>
         /// The assert is null rule.
         /// </value>
-        internal static DiagnosticDescriptor AssertAreEqualRule => BuildAssertAreEqualRule();
+        internal static DiagnosticDescriptor AssertAreEqualRule => BuildRule();
 
+        /// <summary>
+        /// Analyzes the invocation.
+        /// </summary>
         protected override void AnalyzeInvocation()
         {
             var invocationExpression = Context.Node as InvocationExpressionSyntax;
@@ -69,7 +76,11 @@
                 actualArgument.ToString());
         }
 
-        private static DiagnosticDescriptor BuildAssertAreEqualRule()
+        /// <summary>
+        /// Builds the diagnostic descriptor rule.
+        /// </summary>
+        /// <returns>The diagnostic descriptor rule.</returns>
+        private static DiagnosticDescriptor BuildRule()
         {
             return BuildRule(
                DiagnosticIds.AssertAreEqual,

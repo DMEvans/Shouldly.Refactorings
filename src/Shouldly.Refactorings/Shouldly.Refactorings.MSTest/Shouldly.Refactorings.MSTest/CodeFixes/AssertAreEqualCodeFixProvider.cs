@@ -11,9 +11,16 @@
     using System.Composition;
     using System.Linq;
 
+    /// <summary>
+    /// Code fix provider to convert MSTest Assert.AreEqual invocations to Shouldly ShouldBe invocations
+    /// </summary>
+    /// <seealso cref="Shouldly.Refactorings.MSTest.CodeFixes.BaseShouldlyCodeFixProvider" />
     [ExportCodeFixProvider(LanguageNames.CSharp, Name = nameof(AssertIsNullCodeFixProvider)), Shared]
     public class AssertAreEqualCodeFixProvider : BaseShouldlyCodeFixProvider
     {
+        /// <summary>
+        /// Initializes a new instance of the <see cref="AssertAreEqualCodeFixProvider"/> class.
+        /// </summary>
         public AssertAreEqualCodeFixProvider()
         {
             ExpressionBuilders = new[]
@@ -37,6 +44,11 @@
         /// </value>
         protected override string Title => GetLocalizedResourceString(nameof(Resources.AssertAreEqualFixText)).ToString();
 
+        /// <summary>
+        /// Builds the member access expression.
+        /// </summary>
+        /// <param name="invocationExpression">The invocation expression.</param>
+        /// <returns>The member access expression</returns>
         private MemberAccessExpressionSyntax BuildMemberAccessExpression(InvocationExpressionSyntax invocationExpression)
         {
             var actualArgument = invocationExpression.ArgumentList.Arguments[1];
@@ -49,6 +61,11 @@
             return newExpression;
         }
 
+        /// <summary>
+        /// Builds the invocation expression for actual.ShouldBe(expected).
+        /// </summary>
+        /// <param name="invocationExpression">The invocation expression.</param>
+        /// <returns>The new invocation expression</returns>
         private InvocationExpressionSyntax BuildShouldBeBasic(InvocationExpressionSyntax invocationExpression)
         {
             var newMemberAccessExpression = BuildMemberAccessExpression(invocationExpression);
@@ -64,6 +81,11 @@
             return newInvocationExpression;
         }
 
+        /// <summary>
+        /// Builds the invocation expression for actual.ShouldBe(expected, message).
+        /// </summary>
+        /// <param name="invocationExpression">The invocation expression.</param>
+        /// <returns>The new invocation expression</returns>
         private InvocationExpressionSyntax BuildShouldBeBasicWithMessage(InvocationExpressionSyntax invocationExpression)
         {
             var newMemberAccessExpression = BuildMemberAccessExpression(invocationExpression);
@@ -81,6 +103,11 @@
             return newInvocationExpression;
         }
 
+        /// <summary>
+        /// Builds the invocation expression for actual.ShouldBe(expected, string.Format(message, parameters)).
+        /// </summary>
+        /// <param name="invocationExpression">The invocation expression.</param>
+        /// <returns>The new invocation expression</returns>
         private InvocationExpressionSyntax BuildShouldBeBasicWithMessageAndParameters(InvocationExpressionSyntax invocationExpression)
         {
             var newMemberAccessExpression = BuildMemberAccessExpression(invocationExpression);
@@ -101,6 +128,13 @@
             return newInvocationExpression;
         }
 
+        /// <summary>
+        /// Determines whether the invocation is Assert.AreEqual(expected, actual).
+        /// </summary>
+        /// <param name="symbol">The symbol.</param>
+        /// <returns>
+        ///   <c>true</c> if the invocation is Assert.AreEqual(expected, actual).
+        /// </returns>
         private bool IsBasicOverload(IMethodSymbol symbol)
         {
             var parameters = symbol.Parameters;
@@ -114,6 +148,13 @@
                    parameters[1].Name == "actual";
         }
 
+        /// <summary>
+        /// Determines whether the invocation is Assert.AreEqual(expected, actual, message).
+        /// </summary>
+        /// <param name="symbol">The symbol.</param>
+        /// <returns>
+        ///   <c>true</c> if the invocation is Assert.AreEqual(expected, actual, message).
+        /// </returns>
         private bool IsBasicWithMessageAndParametersOverload(IMethodSymbol symbol)
         {
             var parameters = symbol.Parameters;
@@ -129,6 +170,13 @@
                    parameters[3].Name == "parameters" && parameters[3].IsParams;
         }
 
+        /// <summary>
+        /// Determines whether the invocation is Assert.AreEqual(expected, actual, message, parameters).
+        /// </summary>
+        /// <param name="symbol">The symbol.</param>
+        /// <returns>
+        ///   <c>true</c> if the invocation is Assert.AreEqual(expected, actual, message, parameters).
+        /// </returns>
         private bool IsBasicWithMessageOverload(IMethodSymbol symbol)
         {
             var parameters = symbol.Parameters;
