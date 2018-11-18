@@ -10,7 +10,7 @@
     using TestHelper;
 
     [TestClass]
-    [TestCategory("MSTest - Assert.IsNull(value)")]
+    [TestCategory("MSTest - Assert.IsNull")]
     public class AssertIsNullTests : CodeFixVerifier
     {
         [TestMethod]
