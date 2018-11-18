@@ -18,13 +18,15 @@ namespace Shouldly.Refactorings.MSTest.CodeFixes
     [ExportCodeFixProvider(LanguageNames.CSharp, Name = nameof(AssertIsNullCodeFixProvider)), Shared]
     public class AssertIsNullCodeFixProvider : BaseShouldlyCodeFixProvider
     {
+        protected virtual string METHOD_NAME => "ShouldBeNull";
+
         public AssertIsNullCodeFixProvider()
         {
             ExpressionBuilders = new[]
             {
-                new InvocationExpressionBuilder(IsBasicOverload, BuildShouldBeNull),
-                new InvocationExpressionBuilder(IsMessageOverload, BuildShouldBeNullWithMessage),
-                new InvocationExpressionBuilder(IsMessageAndParametersOverload, BuildShouldBeNullWithMessageAndParameters)
+                new InvocationExpressionBuilder(IsBasicOverload, BuildBasicInvocation),
+                new InvocationExpressionBuilder(IsMessageOverload, BuildInvocationWithMessage),
+                new InvocationExpressionBuilder(IsMessageAndParametersOverload, BuildInvocationWithMessageAndParameters)
             };
         }
 
@@ -85,7 +87,7 @@ namespace Shouldly.Refactorings.MSTest.CodeFixes
             var valueArgument = invocationExpression.ArgumentList.Arguments[0];
 
             var identifier = valueArgument.Expression as IdentifierNameSyntax;
-            var shouldBeIdentifier = SyntaxFactory.IdentifierName("ShouldBeNull");
+            var shouldBeIdentifier = SyntaxFactory.IdentifierName(METHOD_NAME);
 
             var newExpression = SyntaxFactory.MemberAccessExpression(SyntaxKind.SimpleMemberAccessExpression, identifier, shouldBeIdentifier);
 
@@ -145,7 +147,7 @@ namespace Shouldly.Refactorings.MSTest.CodeFixes
         /// </summary>
         /// <param name="invocationExpression">The invocation expression.</param>
         /// <returns>The new invocation expression</returns>
-        private InvocationExpressionSyntax BuildShouldBeNull(InvocationExpressionSyntax invocationExpression)
+        private InvocationExpressionSyntax BuildBasicInvocation(InvocationExpressionSyntax invocationExpression)
         {
             var newMemberAccessExpression = BuildMemberAccessExpression(invocationExpression);
 
@@ -163,8 +165,7 @@ namespace Shouldly.Refactorings.MSTest.CodeFixes
         /// </summary>
         /// <param name="invocationExpression">The invocation expression.</param>
         /// <returns>The new invocation expression</returns>
-
-        private InvocationExpressionSyntax BuildShouldBeNullWithMessage(InvocationExpressionSyntax invocationExpression)
+        private InvocationExpressionSyntax BuildInvocationWithMessage(InvocationExpressionSyntax invocationExpression)
         {
             var newMemberAccessExpression = BuildMemberAccessExpression(invocationExpression);
 
@@ -185,7 +186,7 @@ namespace Shouldly.Refactorings.MSTest.CodeFixes
         /// </summary>
         /// <param name="invocationExpression">The invocation expression.</param>
         /// <returns>The new invocation expression</returns>
-        private InvocationExpressionSyntax BuildShouldBeNullWithMessageAndParameters(InvocationExpressionSyntax invocationExpression)
+        private InvocationExpressionSyntax BuildInvocationWithMessageAndParameters(InvocationExpressionSyntax invocationExpression)
         {
             var newMemberAccessExpression = BuildMemberAccessExpression(invocationExpression);
 
